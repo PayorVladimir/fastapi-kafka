@@ -9,6 +9,7 @@ class ProducerMessage(BaseModel):
     lat: confloat(lt=90, gt=-90)
     lon: confloat(lt=180, gt=-180)
     ele: float
+    name: str
 
 
 class KafkaMessage(ProducerMessage):

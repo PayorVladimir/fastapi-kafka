@@ -13,11 +13,8 @@ app = FastAPI(title=config.PROJECT_NAME)
 app.add_middleware(CORSMiddleware, allow_origins=["*"])
 
 
-
-
 @app.websocket_route("/consumer/{topic}")
 class ConsumerTopicWebscoket(WebSocketEndpoint):
-
     async def consume(self, consumer: AIOKafkaConsumer) -> str:
         async for message in consumer:
             return message.value.decode()
@@ -43,7 +40,8 @@ class ConsumerTopicWebscoket(WebSocketEndpoint):
         await self.kafka_consumer.start()
 
         self.consumer_task = asyncio.create_task(
-            self.send_message_to_websocket(topic=topic, websocket=websocket))
+            self.send_message_to_websocket(topic=topic, websocket=websocket)
+        )
         await self.consumer_task
 
     async def on_receive(self, websocket: WebSocket, data: typing.Any) -> None:
@@ -62,9 +60,5 @@ class ConsumerTopicWebscoket(WebSocketEndpoint):
             response = ConsumerResponse(**json.loads(consumer_data), topic=topic)
 
             await websocket.send_json(
-                WebSocketMessage(type="location", data=response.dict()).dict())
-
-
-@app.get("/ping")
-def ping():
-    return {"ping": "pong!"}
+                WebSocketMessage(type="location", data=response.dict()).dict()
+            )
